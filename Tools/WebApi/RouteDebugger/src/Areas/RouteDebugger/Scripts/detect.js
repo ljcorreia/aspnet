@@ -52,32 +52,35 @@
     function routeModel(routePOCO) {
         var self = this;
 
-        self.serializeKeyValueEnumerable = function (data) {
+        self.serializeKeyValueEnumerable = function(data) {
             var retval = "";
 
             if (data !== null) {
-                $.each(data, function (idx, entity) {
-                    retval += "[" + entity.Key + ":" + entity.Value + "] ";
-                })
+                $.each(data,
+                    function(idx, entity) {
+                        retval += "[" + entity.Key + ":" + entity.Value + "] ";
+                    });
 
                 retval.trim();
             }
 
             return retval;
-        }
+        };
 
         self.raw = routePOCO;
         self.routeTemplate = self.raw.RouteTemplate;
         self.picked = self.raw.Picked;
         self.handler = self.raw.Handler;
         self.defaults = ko.computed(function () {
-            return self.serializeKeyValueEnumerable(self.raw.Defaults);
+            return self.serializeKeyValueEnumerable(self.raw.defaults);
         });
         self.constraints = ko.computed(function () {
-            return self.serializeKeyValueEnumerable(self.raw.Constraints);
+            return self.serializeKeyValueEnumerable(self.raw.constraints);
         });
         self.dataTokens = ko.computed(function () {
-            return self.serializeKeyValueEnumerable(self.raw.DataTokens);
+            if (self.raw.dataTokens) {
+                return self.serializeKeyValueEnumerable(self.raw.dataTokens);
+            }
         });
     }
 
@@ -101,14 +104,14 @@
         reset();
 
         // update route data
-        model.route.routeTemplate(data.RouteData.RouteTemplate);
+        model.route.routeTemplate(data.routeData.routeTemplate);
 
-        $.each(data.RouteData.Data, function (idx, entity) {
+        $.each(data.routeData.data, function (idx, entity) {
             model.route.data.push({ key: entity.Key, value: entity.Value });
         });
 
         // update routes
-        $.each(data.Routes, function (idx, entity) {
+        $.each(data.routes, function (idx, entity) {
             model.routes.push(new routeModel(entity));
         });
 
